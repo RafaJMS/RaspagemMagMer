@@ -10,7 +10,7 @@ namespace RaspagemMagMer.Operations
 {
     public class SendEmail
     {
-        static void Enviaremail(string nomeProduto, string precoMag, string precoMerc, string responseBench)
+        public static void Enviaremail(string nomeProduto, string precoMag, string precoMerc, string responseBench)
         {
             // configurações do servidor smtp do gmail
             string smtpserver = "smtp-mail.outlook.com"; // servidor smtp do gmail
