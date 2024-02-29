@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
 using RaspagemMagMer.Scraps;
 using RaspagemMagMer.Operations;
+using static Program;
 
 // Classe de contexto do banco de dados
 public class LogContext : DbContext
@@ -50,8 +51,12 @@ class Program
         Timer timer = new Timer(VerificarNovoProduto, null, 0, intervalo);
 
         // Manter a aplicação rodando
-        Console.WriteLine("Pressione qualquer tecla para sair...");
-        Console.ReadKey();
+        while (true)
+        {
+            // Isso evita que o aplicativo encerre imediatamente após iniciar o timer
+            Thread.Sleep(Timeout.Infinite);
+        }
+
     }
 
     static async void VerificarNovoProduto(object state)
@@ -85,7 +90,7 @@ class Program
                         if (!produtosVerificados.Exists(p => p.Id == produto.Id))
                         {
                             // Se é um novo produto, faça algo com ele
-                            Console.WriteLine($"Novo produto encontrado: ID {produto.Id}, Nome: {produto.Nome}");
+                            Console.WriteLine($"Novo produto encontrado: ID {produto.Id}, Nome: {produto.Nome}\n");
                             // Adicionar o produto à lista de produtos verificados
                             produtosVerificados.Add(produto);
                             
@@ -96,15 +101,43 @@ class Program
                                 RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "ConsultaAPI - Verificar Produto", "Sucesso", produto.Id);
 
                                 MercadoLivreScraper mercadoLivreScraper = new();
-                                string mercadoLivre = mercadoLivreScraper.ObterPreco(produto.Nome, produto.Id);
+                                string[] mercadoLivre = mercadoLivreScraper.ObterPreco(produto.Nome, produto.Id);
+                                string mercadoLivrePreco = mercadoLivre[0];
+                                string mercadoLivreNome = mercadoLivre[1];
+                                string mercadoLivreLink = mercadoLivre[2];
 
                                 MagazineLuizaScraper magazineLuizaScraper = new();
-                                string magazineLuiza =  magazineLuizaScraper.ObterPreco(produto.Nome, produto.Id);
+                                string[] magazineLuiza =  magazineLuizaScraper.ObterPreco(produto.Nome, produto.Id);
+                                string magazineLuizaPreco = magazineLuiza[0];
+                                string magazineLuizaNome = magazineLuiza[1];
+                                string magazineLuizaLink = magazineLuiza[2];
 
-                                string responseBench = Benchmarking.CompareValue(magazineLuiza, mercadoLivre);
+                                string responseBench = Benchmarking.CompareValue(magazineLuizaPreco, mercadoLivrePreco,mercadoLivreLink,magazineLuizaLink);
 
-                                RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "Benchmarking", "Sucesso", produto.Id);
+                                if (responseBench != null) RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "Benchmarking", "Sucesso", produto.Id);
+                                
+                                else RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "Benchmarking", "Erro0", produto.Id);
 
+                                bool responseEmail = SendEmail.Enviaremail(produto.Nome,magazineLuizaNome,magazineLuizaPreco,mercadoLivreNome,mercadoLivrePreco,responseBench);
+                                
+                                if (responseEmail == true ) RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "SendEmail", "Sucesso", produto.Id);
+
+                                else RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "SendEmail", "Erro", produto.Id);
+                                
+                                Console.WriteLine("Deseja receber o resultado pelo Whatssap? (S ou N)");
+                                
+                                string opt = Console.ReadLine();
+                                
+                                if (opt.ToUpper() == "S")
+                                
+                                {
+                                    bool responseMessage = SendMessage.EnviarMsg(produto.Nome, magazineLuizaNome, magazineLuizaPreco, mercadoLivreNome, mercadoLivrePreco, responseBench).Result;
+
+                                    if (responseMessage == true) RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "SendMessage", "Sucesso", produto.Id);
+
+                                    else RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "SendMessage", "Falha", produto.Id);
+                                }
+                                    
 
                             }
                         }
@@ -142,7 +175,7 @@ class Program
     }
 
     // Método para registrar um log no banco de dados
-    static void RegistrarLog(string codRob, string usuRob, DateTime dateLog, string processo, string infLog, int idProd)
+    public static void RegistrarLog(string codRob, string usuRob, DateTime dateLog, string processo, string infLog, int idProd)
     {
         using (var context = new LogContext())
         {

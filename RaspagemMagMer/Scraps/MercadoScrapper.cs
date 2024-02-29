@@ -5,8 +5,9 @@ namespace RaspagemMagMer.Scraps
 {
     public class MercadoLivreScraper
     {
-        public string ObterPreco(string descricaoProduto, int idProduto)
+        public string[] ObterPreco(string descricaoProduto, int idProduto)
         {
+            string[] response = new string[3];
             // URL da pesquisa no Mercado Livre com base na descrição do produto
             string url = $"https://lista.mercadolivre.com.br/{descricaoProduto}";
 
@@ -20,18 +21,22 @@ namespace RaspagemMagMer.Scraps
 
                 // Encontra o elemento que contém o preço do primeiro produto            
                 HtmlNode firstProductPriceNode = document.DocumentNode.SelectSingleNode("//span[@class='andes-money-amount__fraction']");
-
+                HtmlNode firstProductPriceName = document.DocumentNode.SelectSingleNode("//h2[@class='ui-search-item__title']");
+                
                 // Verifica se o elemento foi encontrado
-                if (firstProductPriceNode != null)
+                if (firstProductPriceNode != null && firstProductPriceName!=null)
                 {
                     // Obtém o preço do primeiro produto
                     string firstProductPrice = firstProductPriceNode.InnerText.Trim();
-
+                    string firstProductName = firstProductPriceName.InnerText.Trim();
                     // Registra o log com o ID do produto
                     RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "WebScraping - Mercado Livre", "Sucesso", idProduto);
 
                     // Retorna o preço
-                    return firstProductPrice;
+                    response[0] = firstProductPrice;
+                    response[1] = firstProductName;
+                    response[2] = url.Replace(' ', '-');
+                    return response;
                 }
                 else
                 {

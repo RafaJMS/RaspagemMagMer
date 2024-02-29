@@ -5,18 +5,19 @@ using System.Net;
 using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
+using static Program;
 
 namespace RaspagemMagMer.Operations
 {
     public class SendEmail
     {
-        public static void Enviaremail(string nomeProduto, string precoMag, string precoMerc, string responseBench)
+        public static bool Enviaremail(string nomeProduto,string nomeMag ,string precoMag, string nomeMerc, string precoMerc, string responseBench)
         {
             // configurações do servidor smtp do gmail
             string smtpserver = "smtp-mail.outlook.com"; // servidor smtp do gmail
             int porta = 587; // porta smtp do gmail para tls/starttls
-            string remetente = "wallacemaximus@hotmail.com"; // seu endereço de e-mail do gmail
-            string senha = "teste"; // sua senha do gmail
+            string remetente = "enviotesterafamece@outlook.com"; // seu endereço de e-mail do gmail
+            string senha = "teste123@"; // sua senha do gmail
 
             // configurar cliente smtp
             using (SmtpClient client = new SmtpClient(smtpserver, porta))
@@ -26,26 +27,35 @@ namespace RaspagemMagMer.Operations
                 client.EnableSsl = true; // habilitar ssl/tls
 
                 // construir mensagem de e-mail
-                MailMessage mensagem = new(remetente, "wallace@docente.senai.br")
+                MailMessage mensagem = new(remetente, "enviotesterafamece@outlook.com")
                 {
-                    Subject = "resultado da comparação de preços",
-                    Body = $"Mercado Livre:\n" +
-                           $"Nome: {nomeProduto} \n" +
-                           $"Preço: {precoMerc}\n" +
-                           "" +
+                    Subject = "Resultado da Comparação de Preços",
+                    Body = $"Produto Pesquisado: {nomeProduto}\n" +
+                           "\n" +
+                           $"Mercado Livre:\n" +
+                           $"Nome: {nomeMerc} \n" +
+                           $"Preço: R$ {precoMerc}\n" +
+                           "\n" +
                            $"Magazine Luiza:\n" +
-                           $"Nome: {nomeProduto} \n" +
+                           $"Nome: {nomeMag} \n" +
                            $"Preço: {precoMag}\n" +
-                           "" +
+                           "\n" +
                            $"Resultado:\n" +
                            $"{responseBench}\n"
-
-
 
                 };
 
                 // enviar e-mail
-                client.Send(mensagem);
+                try
+                {
+                    client.Send(mensagem);
+                    return true;
+                
+                }catch (Exception ex)
+                {
+                    return false;
+                }
+                
 
 
 
