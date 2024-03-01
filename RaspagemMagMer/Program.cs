@@ -87,7 +87,7 @@ class Program
                                 
                                 string mercadoLivrePreco = mercadoLivre[0];
 
-                                string mercadoLivreNome = mercadoLivreScraper.ObterNome(produto.Nome);
+                                string mercadoLivreNome = mercadoLivre[1];
                                 
                                 string mercadoLivreLink = mercadoLivre[2];
 
@@ -99,7 +99,7 @@ class Program
                                 string magazineLuizaNome = magazineLuizaScraper.ObterNome(produto.Nome);
                                 Console.WriteLine(magazineLuizaNome);
                                 
-                                string magazineLuizaLink = magazineLuiza[2];
+                                string magazineLuizaLink = magazineLuizaScraper.ObterLink(produto.Nome);
 
                                 string responseBench = Benchmarking.CompareValue(magazineLuizaPreco, mercadoLivrePreco,mercadoLivreLink,magazineLuizaLink);
 
