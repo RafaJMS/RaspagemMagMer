@@ -14,7 +14,7 @@ namespace RaspagemMagMer.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=PC03LAB2533\\SENAI;Database=ScrapingDb;User Id=sa;Password=senai.123;"); // Substitua "YourConnectionString" pela sua string de conexão
+            optionsBuilder.UseSqlServer("Server=RAFAELMECENAS\\DBPRACTICE;Database=ScrapingDb;User Id=sa;Password=senha123;");
         }
     }
 }

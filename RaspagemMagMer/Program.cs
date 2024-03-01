@@ -16,7 +16,6 @@ using RaspagemMagMer.Models;
 
 class Program
 {
-    // Lista para armazenar produtos já verificados
     static List<Produto> produtosVerificados = new List<Produto>();
 
     static void Main(string[] args)
@@ -83,26 +82,21 @@ class Program
                                 RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "ConsultaAPI - Verificar Produto", "Sucesso", produto.Id);
 
                                 MercadoLivreScraper mercadoLivreScraper = new();
-                                string[] mercadoLivre = mercadoLivreScraper.ObterPreco(produto.Nome, produto.Id);
-                                
-                                string mercadoLivrePreco = mercadoLivre[0];
+                                string mercadoLivrePreco = mercadoLivreScraper.ObterPreco(produto.Nome, produto.Id);
 
-                                string mercadoLivreNome = mercadoLivre[1];
+                                string mercadoLivreNome = mercadoLivreScraper.ObterNome(produto.Nome);
                                 
-                                string mercadoLivreLink = mercadoLivre[2];
+                                string mercadoLivreLink = mercadoLivreScraper.ObterLink(produto.Nome);
 
                                 MagazineLuizaScraper magazineLuizaScraper = new();
-                                string magazineLuiza =  magazineLuizaScraper.ObterPreco(produto.Nome, produto.Id);
-                                
-                                string magazineLuizaPreco = magazineLuiza;
+                                string magazineLuizaPreco =  magazineLuizaScraper.ObterPreco(produto.Nome, produto.Id);
                                 
                                 string magazineLuizaNome = magazineLuizaScraper.ObterNome(produto.Nome);
-                                Console.WriteLine(magazineLuizaNome);
                                 
                                 string magazineLuizaLink = magazineLuizaScraper.ObterLink(produto.Nome);
 
                                 string responseBench = Benchmarking.CompareValue(magazineLuizaPreco, mercadoLivrePreco,mercadoLivreLink,magazineLuizaLink);
-
+                                
                                 if (responseBench != null) RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "Benchmarking", "Sucesso", produto.Id);
                                 
                                 else RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "Benchmarking", "Erro", produto.Id);
@@ -118,6 +112,7 @@ class Program
                                     SendMessage.EnviarMsg(phoneNumber, produto.Nome, magazineLuizaNome, magazineLuizaPreco, mercadoLivreNome, mercadoLivrePreco, responseBench);
                                     RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "SendZap", "Sucesso", produto.Id);
                                 }
+
                             }
                         }
                     }
@@ -136,7 +131,6 @@ class Program
         }
     }
 
-    // Método para processar os dados da resposta e obter produtos
     static List<Produto> ObterNovosProdutos(string responseData)
     {
         // Desserializar os dados da resposta para uma lista de produtos
@@ -144,7 +138,6 @@ class Program
         return produtos;
     }
 
-    // Método para verificar se o produto já foi registrado no banco de dados
     static bool ProdutoJaRegistrado(int idProduto)
     {
         using (var context = new LogContext())
@@ -153,7 +146,6 @@ class Program
         }
     }
 
-    // Método para registrar um log no banco de dados
     public static void RegistrarLog(string codRob, string usuRob, DateTime dateLog, string processo, string infLog, int idProd)
     {
         using (var context = new LogContext())

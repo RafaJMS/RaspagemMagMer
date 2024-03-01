@@ -27,7 +27,7 @@ namespace RaspagemMagMer.Operations
                 client.EnableSsl = true; // habilitar ssl/tls
 
                 // construir mensagem de e-mail
-                MailMessage mensagem = new(remetente, "wallace@docente.senai.br")
+                MailMessage mensagem = new(remetente, "enviotesterafamece@outlook.com")
                 {
                     Subject = "Resultado da Comparação de Preços",
                     Body = $"Produto Pesquisado: {nomeProduto}\n" +
@@ -53,6 +53,7 @@ namespace RaspagemMagMer.Operations
                 
                 }catch (Exception ex)
                 {
+                    Console.WriteLine(ex.Message);
                     return false;
                 }
                 
