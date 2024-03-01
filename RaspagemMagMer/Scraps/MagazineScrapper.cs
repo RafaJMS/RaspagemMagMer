@@ -1,5 +1,6 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using RaspagemMagMer.Models;
 using System;
 using static Program;
 
@@ -7,7 +8,7 @@ namespace RaspagemMagMer.Scraps
 {
     public class MagazineLuizaScraper
     {
-        public string[] ObterPreco(string descricaoProduto, int idProduto)
+        public string ObterPreco(string descricaoProduto, int idProduto)
         {
             string[] response = new string[3];
             try
@@ -36,10 +37,7 @@ namespace RaspagemMagMer.Scraps
                     RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "WebScraping - Magazine Luiza", "Sucesso", idProduto);
 
                     // Retorna o preço
-                    response[0] = firspProductPrice;
-                    response[1] = firstProductName;
-                    response[2] = url.Replace(' ', '+'); 
-                    return response;
+                    return firspProductPrice;
                 }
                 else
                 {
@@ -81,7 +79,29 @@ namespace RaspagemMagMer.Scraps
             }
 
         }
-        
-      
+
+
+        public string ObterNome(string descricaoProduto)
+        {
+            string url = ($"https://www.magazineluiza.com.br/busca/{descricaoProduto}");
+            using IWebDriver driver = new ChromeDriver();
+            driver.Navigate().GoToUrl(url);
+            IWebElement nameElement = driver.FindElement(By.CssSelector("[data-testid='product-title']"));
+
+            if (nameElement != null)
+            {
+                return nameElement.Text;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public string ObterLink(string descricaoProduto)
+        {
+            string url = ($"https://www.magazineluiza.com.br/busca/{descricaoProduto.Replace(' ', '+')}");
+            return url;
+        }
     }
 }

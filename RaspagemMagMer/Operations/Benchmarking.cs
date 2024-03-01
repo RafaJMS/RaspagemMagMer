@@ -26,7 +26,7 @@ namespace RaspagemMagMer.Operations
             else if (magazineLuizaPreco < mercadoLivrePreco)
             {
                 return $"O preço do produto está melhor na Magazine Luiza, pois está R$ {mercadoLivrePreco - magazineLuizaPreco} mais barato\n" +
-                       $"Link para produto: {linkMer}";
+                       $"Link para produto: {linkMag}";
                        
             }
             else

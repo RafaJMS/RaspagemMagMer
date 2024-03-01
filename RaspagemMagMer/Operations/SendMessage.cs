@@ -2,28 +2,28 @@
 using System.IO;
 using System.Net;
 using System.Text;
+using static Program;
 
 namespace RaspagemMagMer.Operations
 {
     public class SendMessage
     {
-        public static async Task<bool> EnviarMsg(string nomeProduto, string nomeMag, string precoMag, string nomeMerc, string precoMerc, string responseBench)
+        public static async void EnviarMsg(string phoneNumber,string nomeProduto, string nomeMag, string precoMag, string nomeMerc, string precoMerc, string responseBench)
         {
-                Console.WriteLine("Insira o Número do Whatssap: DDD + Número (Apenas Números)");
-                string num = ("55" + Console.ReadLine());
+              
 
 
                 try
                 {
+
                     var parameters = new System.Collections.Specialized.NameValueCollection();
-                    var client = new WebClient();
+                    var client = new System.Net.WebClient();
 
                     var url = "https://app.whatsgw.com.br/api/WhatsGw/Send/";
 
-
                     parameters.Add("apikey", "dd42786b-64c9-49fd-9b28-4a82a005a98d"); //switch to your api key
                     parameters.Add("phone_number", "5579998626376"); //switch to your connected number
-                    parameters.Add("contact_phone_number", num); //switch to your number text to received message
+                    parameters.Add("contact_phone_number", phoneNumber); //switch to your number text to received message
                     parameters.Add("message_custom_id", "teste");
                     parameters.Add("message_type", "text");
                     parameters.Add("message_body",
@@ -42,23 +42,37 @@ namespace RaspagemMagMer.Operations
                            $"*Resultado*:\n" +
                            $"{responseBench}\n");
 
-                    byte[] response_data = await client.UploadValuesTaskAsync(url, "POST", parameters);
-                    string responseString = Encoding.UTF8.GetString(response_data);
+                    byte[] response_data;
+                    string responseString = "";
+
+                    response_data = await client.UploadValuesTaskAsync(url, "POST", parameters);
+                    responseString = Encoding.UTF8.GetString(response_data);
 
                     Console.WriteLine("Response String: " + responseString);
-                    return true;
 
                 }
                 catch (Exception ex)
                 {
 
                     Console.WriteLine($"FALHA: {ex.Message}");
-                    return false;
+                    
                 }
             
             
 
         }
 
+        public static string OpcaoMsg() {
+            Console.WriteLine("Você Deseja Receber os Dados pelo telefone? Sim ou Nao");
+            string opt = Console.ReadLine();
+            string num = "";
+            if (opt.ToUpper().Equals("SIM"))
+            {
+                Console.WriteLine("Insira o Número do Whatssap: DDD + Número (Apenas Números)");
+                num = "55" + Console.ReadLine();
+                return num;
+            }
+            return null;
+        }
     }
 }

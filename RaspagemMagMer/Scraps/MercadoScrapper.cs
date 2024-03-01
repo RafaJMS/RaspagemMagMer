@@ -1,5 +1,9 @@
 ﻿using HtmlAgilityPack;
+using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium;
+using RaspagemMagMer.Models;
 using System;
+using System.Reflection.Metadata;
 
 namespace RaspagemMagMer.Scraps
 {
@@ -75,6 +79,29 @@ namespace RaspagemMagMer.Scraps
                 context.Logs.Add(log);
                 context.SaveChanges();
             }
+        }
+
+        public string ObterNome(string descricaoProduto)
+        {
+            string url = ($"https://www.magazineluiza.com.br/busca/{descricaoProduto}");
+            HtmlWeb web = new HtmlWeb();
+            HtmlDocument document = web.Load(url);
+            HtmlNode firstProductPriceName = document.DocumentNode.SelectSingleNode("//h2[@class='ui-search-item__title']");
+
+            if (firstProductPriceName != null)
+            {
+                return firstProductPriceName.InnerText.Trim();
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public string ObterLink(string descricaoProduto)
+        {
+            string url = ($"https://lista.mercadolivre.com.br/{descricaoProduto.Replace(' ', '+')}");
+            return url;
         }
     }
 }

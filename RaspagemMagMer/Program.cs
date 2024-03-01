@@ -12,30 +12,7 @@ using System.ComponentModel.DataAnnotations;
 using RaspagemMagMer.Scraps;
 using RaspagemMagMer.Operations;
 using static Program;
-
-// Classe de contexto do banco de dados
-public class LogContext : DbContext
-{
-    public DbSet<Log> Logs { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.UseSqlServer("Server=PC03LAB2533\\SENAI;Database=ScrapingDb;User Id=sa;Password=senai.123;"); // Substitua "YourConnectionString" pela sua string de conexão
-    }
-}
-
-// Classe de modelo para os logs
-public class Log
-{
-    [Key]
-    public int IdLog { get; set; }
-    public string CodRob { get; set; }
-    public string UsuRob { get; set; }
-    public DateTime DateLog { get; set; }
-    public string Processo { get; set; }
-    public string InfLog { get; set; }
-    public int IdProd { get; set; }
-}
+using RaspagemMagMer.Models;
 
 class Program
 {
@@ -44,11 +21,12 @@ class Program
 
     static void Main(string[] args)
     {
+        string phoneNumber = SendMessage.OpcaoMsg();
         // Definir o intervalo de tempo para 5 minutos (300.000 milissegundos)
-        int intervalo = 6000;
+        int intervalo = 60000;
 
         // Criar um temporizador que dispara a cada 5 minutos
-        Timer timer = new Timer(VerificarNovoProduto, null, 0, intervalo);
+        Timer timer = new(state => VerificarNovoProduto(phoneNumber), null, 0, intervalo);
 
         // Manter a aplicação rodando
         while (true)
@@ -60,11 +38,14 @@ class Program
     }
 
     static async void VerificarNovoProduto(object state)
+
     {
+        string phoneNumber = state as string;
         string username = "11164448";
         string senha = "60-dayfreetrial";
         string url = "http://regymatrix-001-site1.ktempurl.com/api/v1/produto/getall";
 
+        
         try
         {
             // Criar um objeto HttpClient
@@ -82,7 +63,8 @@ class Program
                 {
                     // Ler o conteúdo da resposta como uma string
                     string responseData = await response.Content.ReadAsStringAsync();
-
+                       
+                
                     // Processar os dados da resposta
                     List<Produto> novosProdutos = ObterNovosProdutos(responseData);
                     foreach (Produto produto in novosProdutos)
@@ -102,43 +84,40 @@ class Program
 
                                 MercadoLivreScraper mercadoLivreScraper = new();
                                 string[] mercadoLivre = mercadoLivreScraper.ObterPreco(produto.Nome, produto.Id);
+                                
                                 string mercadoLivrePreco = mercadoLivre[0];
-                                string mercadoLivreNome = mercadoLivre[1];
+
+                                string mercadoLivreNome = mercadoLivreScraper.ObterNome(produto.Nome);
+                                
                                 string mercadoLivreLink = mercadoLivre[2];
 
                                 MagazineLuizaScraper magazineLuizaScraper = new();
-                                string[] magazineLuiza =  magazineLuizaScraper.ObterPreco(produto.Nome, produto.Id);
-                                string magazineLuizaPreco = magazineLuiza[0];
-                                string magazineLuizaNome = magazineLuiza[1];
+                                string magazineLuiza =  magazineLuizaScraper.ObterPreco(produto.Nome, produto.Id);
+                                
+                                string magazineLuizaPreco = magazineLuiza;
+                                
+                                string magazineLuizaNome = magazineLuizaScraper.ObterNome(produto.Nome);
+                                Console.WriteLine(magazineLuizaNome);
+                                
                                 string magazineLuizaLink = magazineLuiza[2];
 
                                 string responseBench = Benchmarking.CompareValue(magazineLuizaPreco, mercadoLivrePreco,mercadoLivreLink,magazineLuizaLink);
 
                                 if (responseBench != null) RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "Benchmarking", "Sucesso", produto.Id);
                                 
-                                else RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "Benchmarking", "Erro0", produto.Id);
+                                else RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "Benchmarking", "Erro", produto.Id);
 
                                 bool responseEmail = SendEmail.Enviaremail(produto.Nome,magazineLuizaNome,magazineLuizaPreco,mercadoLivreNome,mercadoLivrePreco,responseBench);
                                 
                                 if (responseEmail == true ) RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "SendEmail", "Sucesso", produto.Id);
 
                                 else RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "SendEmail", "Erro", produto.Id);
-                                
-                                Console.WriteLine("Deseja receber o resultado pelo Whatssap? (S ou N)");
-                                
-                                string opt = Console.ReadLine();
-                                
-                                if (opt.ToUpper() == "S")
-                                
+
+                                if (phoneNumber != null)
                                 {
-                                    bool responseMessage = SendMessage.EnviarMsg(produto.Nome, magazineLuizaNome, magazineLuizaPreco, mercadoLivreNome, mercadoLivrePreco, responseBench).Result;
-
-                                    if (responseMessage == true) RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "SendMessage", "Sucesso", produto.Id);
-
-                                    else RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "SendMessage", "Falha", produto.Id);
+                                    SendMessage.EnviarMsg(phoneNumber, produto.Nome, magazineLuizaNome, magazineLuizaPreco, mercadoLivreNome, mercadoLivrePreco, responseBench);
+                                    RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "SendZap", "Sucesso", produto.Id);
                                 }
-                                    
-
                             }
                         }
                     }
@@ -193,11 +172,6 @@ class Program
         }
     }
 
-    // Classe para representar um produto
-    public class Produto
-    {
-        public int Id { get; set; }
-        public string Nome { get; set; }
-    }
+
 }
 

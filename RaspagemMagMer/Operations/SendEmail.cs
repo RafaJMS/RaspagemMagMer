@@ -27,7 +27,7 @@ namespace RaspagemMagMer.Operations
                 client.EnableSsl = true; // habilitar ssl/tls
 
                 // construir mensagem de e-mail
-                MailMessage mensagem = new(remetente, "enviotesterafamece@outlook.com")
+                MailMessage mensagem = new(remetente, "wallace@docente.senai.br")
                 {
                     Subject = "Resultado da Comparação de Preços",
                     Body = $"Produto Pesquisado: {nomeProduto}\n" +
