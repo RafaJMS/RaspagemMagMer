@@ -21,16 +21,16 @@ class Program
     static void Main(string[] args)
     {
         string phoneNumber = SendMessage.OpcaoMsg();
-        // Definir o intervalo de tempo para 5 minutos (300.000 milissegundos)
-        int intervalo = 60000;
+        
+        int intervalo = 300000;
 
-        // Criar um temporizador que dispara a cada 5 minutos
+       
         Timer timer = new(state => VerificarNovoProduto(phoneNumber), null, 0, intervalo);
 
-        // Manter a aplicação rodando
+        
         while (true)
         {
-            // Isso evita que o aplicativo encerre imediatamente após iniciar o timer
+            
             Thread.Sleep(Timeout.Infinite);
         }
 
@@ -47,39 +47,39 @@ class Program
         
         try
         {
-            // Criar um objeto HttpClient
+            
             using (HttpClient client = new HttpClient())
             {
-                // Adicionar as credenciais de autenticação básica
+                
                 var byteArray = Encoding.ASCII.GetBytes($"{username}:{senha}");
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
 
-                // Fazer a requisição GET à API
+                
                 HttpResponseMessage response = await client.GetAsync(url);
 
-                // Verificar se a requisição foi bem-sucedida (código de status 200)
+                
                 if (response.IsSuccessStatusCode)
                 {
-                    // Ler o conteúdo da resposta como uma string
+                   
                     string responseData = await response.Content.ReadAsStringAsync();
-                       
-                
-                    // Processar os dados da resposta
+                    
                     List<Produto> novosProdutos = ObterNovosProdutos(responseData);
+
                     foreach (Produto produto in novosProdutos)
                     {
                         if (!produtosVerificados.Exists(p => p.Id == produto.Id))
                         {
-                            // Se é um novo produto, faça algo com ele
+                            
                             Console.WriteLine($"Novo produto encontrado: ID {produto.Id}, Nome: {produto.Nome}\n");
-                            // Adicionar o produto à lista de produtos verificados
+                            
                             produtosVerificados.Add(produto);
                             
 
-                            // Registra um log no banco de dados apenas se o produto for novo
+                            
                             if (!ProdutoJaRegistrado(produto.Id))
                             {
-                                RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "ConsultaAPI - Verificar Produto", "Sucesso", produto.Id);
+                                LogRegister logRegister = new LogRegister();
+                                LogRegister.RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "ConsultaAPI - Verificar Produto", "Sucesso", produto.Id);
 
                                 MercadoLivreScraper mercadoLivreScraper = new();
                                 string mercadoLivrePreco = mercadoLivreScraper.ObterPreco(produto.Nome, produto.Id);
@@ -97,20 +97,19 @@ class Program
 
                                 string responseBench = Benchmarking.CompareValue(magazineLuizaPreco, mercadoLivrePreco,mercadoLivreLink,magazineLuizaLink);
                                 
-                                if (responseBench != null) RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "Benchmarking", "Sucesso", produto.Id);
+                                if (responseBench != null) LogRegister.RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "Benchmarking", "Sucesso", produto.Id);
                                 
-                                else RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "Benchmarking", "Erro", produto.Id);
+                                else LogRegister.RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "Benchmarking", "Erro", produto.Id);
 
                                 bool responseEmail = SendEmail.Enviaremail(produto.Nome,magazineLuizaNome,magazineLuizaPreco,mercadoLivreNome,mercadoLivrePreco,responseBench);
                                 
-                                if (responseEmail == true ) RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "SendEmail", "Sucesso", produto.Id);
+                                if (responseEmail == true ) LogRegister.RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "SendEmail", "Sucesso", produto.Id);
 
-                                else RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "SendEmail", "Erro", produto.Id);
+                                else LogRegister.RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "SendEmail", "Erro", produto.Id);
 
                                 if (phoneNumber != null)
                                 {
-                                    SendMessage.EnviarMsg(phoneNumber, produto.Nome, magazineLuizaNome, magazineLuizaPreco, mercadoLivreNome, mercadoLivrePreco, responseBench);
-                                    RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "SendZap", "Sucesso", produto.Id);
+                                    SendMessage.EnviarMsg(produto.Id,phoneNumber, produto.Nome, magazineLuizaNome, magazineLuizaPreco, mercadoLivreNome, mercadoLivrePreco, responseBench);
                                 }
 
                             }
@@ -126,14 +125,14 @@ class Program
         }
         catch (Exception ex)
         {
-            // Imprimir mensagem de erro caso ocorra uma exceção
+            
             Console.WriteLine($"Erro ao fazer a requisição: {ex.Message}");
         }
     }
 
     static List<Produto> ObterNovosProdutos(string responseData)
     {
-        // Desserializar os dados da resposta para uma lista de produtos
+        
         List<Produto> produtos = JsonConvert.DeserializeObject<List<Produto>>(responseData);
         return produtos;
     }
@@ -146,23 +145,7 @@ class Program
         }
     }
 
-    public static void RegistrarLog(string codRob, string usuRob, DateTime dateLog, string processo, string infLog, int idProd)
-    {
-        using (var context = new LogContext())
-        {
-            var log = new Log
-            {
-                CodRob = codRob,
-                UsuRob = usuRob,
-                DateLog = dateLog,
-                Processo = processo,
-                InfLog = infLog,
-                IdProd = idProd
-            };
-            context.Logs.Add(log);
-            context.SaveChanges();
-        }
-    }
+    
 
 
 }

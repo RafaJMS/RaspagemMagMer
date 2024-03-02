@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RaspagemMagMer.Models;
+using System;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -8,7 +9,7 @@ namespace RaspagemMagMer.Operations
 {
     public class SendMessage
     {
-        public static async void EnviarMsg(string phoneNumber,string nomeProduto, string nomeMag, string precoMag, string nomeMerc, string precoMerc, string responseBench)
+        public static async void EnviarMsg(int produtoid,string phoneNumber,string nomeProduto, string nomeMag, string precoMag, string nomeMerc, string precoMerc, string responseBench)
         {
               
 
@@ -21,41 +22,46 @@ namespace RaspagemMagMer.Operations
 
                     var url = "https://app.whatsgw.com.br/api/WhatsGw/Send/";
 
-                    parameters.Add("apikey", "dd42786b-64c9-49fd-9b28-4a82a005a98d"); //switch to your api key
-                    parameters.Add("phone_number", "5579998626376"); //switch to your connected number
-                    parameters.Add("contact_phone_number", phoneNumber); //switch to your number text to received message
+                    parameters.Add("apikey", "dd42786b-64c9-49fd-9b28-4a82a005a98d");
+                    parameters.Add("phone_number", "5579998626376"); 
+                    parameters.Add("contact_phone_number", phoneNumber); 
                     parameters.Add("message_custom_id", "teste");
                     parameters.Add("message_type", "text");
-                    parameters.Add("message_body",
-                           "*Resultado da Comparação de Preços*" +
-                           "\n" +
-                           $"*Produto Pesquisado*: {nomeProduto}\n" +
-                           "\n" +
-                           $"*Mercado Livre*:\n" +
-                           $"*Nome*: {nomeMerc} \n" +
-                           $"*Preço*: R$ {precoMerc}\n" +
-                           "\n" +
-                           $"*Magazine Luiza*:\n" +
-                           $"*Nome*: {nomeMag} \n" +
-                           $"*Preço*: {precoMag}\n" +
-                           "\n" +
-                           $"*Resultado*:\n" +
-                           $"{responseBench}\n");
+                parameters.Add("message_body",
+                               "*Resultado da Comparação de Preços*" +
+                               "\n" +
+                               $"*Produto Pesquisado*: {nomeProduto}\n" +
+                               "\n" +
+                               $"*Mercado Livre*:\n" +
+                               $"*Nome*: {nomeMerc} \n" +
+                               $"*Preço*: R$ {precoMerc}\n" +
+                               "\n" +
+                               $"*Magazine Luiza*:\n" +
+                               $"*Nome*: {nomeMag} \n" +
+                               $"*Preço*: {precoMag}\n" +
+                               "\n" +
+                               $"*Resultado*:\n" +
+                               $"{responseBench}\n" +
+                               "\n" +
+                               "Robo: 0001\n" +
+                               "Usuario: rafaelmecenas"
+                       );
 
                     byte[] response_data;
                     string responseString = "";
 
                     response_data = await client.UploadValuesTaskAsync(url, "POST", parameters);
                     responseString = Encoding.UTF8.GetString(response_data);
-
                     Console.WriteLine("Response String: " + responseString);
+                    LogRegister.RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "SendZap", "Sucesso", produtoid);
 
-                }
+
+            }
                 catch (Exception ex)
                 {
-
-                    Console.WriteLine($"FALHA: {ex.Message}");
-                    
+                LogRegister.RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "SendZap", "Erro", produtoid);
+                Console.WriteLine($"Erro na Mensagem: {ex.Message}");
+                Console.WriteLine("Vale a pena conferir se a extensão do Whatssap está Incluida no navegador!");
                 }
             
             

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RaspagemMagMer.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -13,21 +14,21 @@ namespace RaspagemMagMer.Operations
     {
         public static bool Enviaremail(string nomeProduto,string nomeMag ,string precoMag, string nomeMerc, string precoMerc, string responseBench)
         {
-            // configurações do servidor smtp do gmail
-            string smtpserver = "smtp-mail.outlook.com"; // servidor smtp do gmail
-            int porta = 587; // porta smtp do gmail para tls/starttls
-            string remetente = "enviotesterafamece@outlook.com"; // seu endereço de e-mail do gmail
-            string senha = "teste123@"; // sua senha do gmail
+            
+            string smtpserver = "smtp-mail.outlook.com";
+            int porta = 587; 
+            string remetente = "rafaelMecenasRobo@outlook.com"; 
+            string senha = "teste123@"; 
 
-            // configurar cliente smtp
+           
             using (SmtpClient client = new SmtpClient(smtpserver, porta))
             {
                 client.UseDefaultCredentials = false;
                 client.Credentials = new NetworkCredential(remetente, senha);
-                client.EnableSsl = true; // habilitar ssl/tls
+                client.EnableSsl = true; 
 
-                // construir mensagem de e-mail
-                MailMessage mensagem = new(remetente, "enviotesterafamece@outlook.com")
+                
+                MailMessage mensagem = new(remetente, "rafaelMecenasRobo@outlook.com")
                 {
                     Subject = "Resultado da Comparação de Preços",
                     Body = $"Produto Pesquisado: {nomeProduto}\n" +
@@ -41,11 +42,15 @@ namespace RaspagemMagMer.Operations
                            $"Preço: {precoMag}\n" +
                            "\n" +
                            $"Resultado:\n" +
-                           $"{responseBench}\n"
+                           $"{responseBench}\n"+
+                           "\n"+
+                           "Robo: 0001\n"+
+                           "Usuario: rafaelmecenas"
+
 
                 };
 
-                // enviar e-mail
+                
                 try
                 {
                     client.Send(mensagem);
@@ -53,7 +58,8 @@ namespace RaspagemMagMer.Operations
                 
                 }catch (Exception ex)
                 {
-                    Console.WriteLine(ex.Message);
+
+                    Console.WriteLine("Erro no Email: "+ex.Message);
                     return false;
                 }
                 
