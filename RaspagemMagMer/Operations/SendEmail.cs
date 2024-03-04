@@ -28,7 +28,6 @@ namespace RaspagemMagMer.Operations
                 client.Credentials = new NetworkCredential(remetente, senha);
                 client.EnableSsl = true; 
 
-                
                 MailMessage mensagem = new(remetente, destinatario)
                 {
                     Subject = "Resultado da Comparação de Preços",
@@ -48,10 +47,8 @@ namespace RaspagemMagMer.Operations
                            "Robo: 180312\n"+
                            "Usuario: rafaelmecenas"
 
-
                 };
 
-                
                 try
                 {
                     client.Send(mensagem);
@@ -59,18 +56,14 @@ namespace RaspagemMagMer.Operations
                 
                 }catch (Exception ex)
                 {
-
                     Console.WriteLine("Erro no Email: "+ex.Message);
                     return false;
                 }
-                
-
-
-
 
             }
 
         }
+
         public static bool ValidarEmail(string email)
         {
             // Padrão de expressão regular para verificar o formato do e-mail

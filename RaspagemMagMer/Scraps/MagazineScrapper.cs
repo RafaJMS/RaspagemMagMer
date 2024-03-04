@@ -9,6 +9,7 @@ namespace RaspagemMagMer.Scraps
 {
     public class MagazineLuizaScraper
     {
+
         public string ObterPreco(string descricaoProduto, int idProduto)
         {
             try

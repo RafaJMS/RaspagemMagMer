@@ -19,15 +19,15 @@ namespace RaspagemMagMer.Operations
 
             {
                 return $"O preço do produto está melhor no Mercado livre, pois está R$ {(magazineLuizaPreco - mercadoLivrePreco)} mais barato\n" +
-                       $"Link para produto: {linkMer}";
-                       
+                       $"Link para produto Mer: {linkMer}";
+
 
             }
             else if (magazineLuizaPreco < mercadoLivrePreco)
             {
                 return $"O preço do produto está melhor na Magazine Luiza, pois está R$ {mercadoLivrePreco - magazineLuizaPreco} mais barato\n" +
-                       $"Link para produto: {linkMag}";
-                       
+                       $"Link para produto Mag: {linkMag}";
+
             }
             else
             {
