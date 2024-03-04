@@ -20,25 +20,31 @@ class Program
 
     static void Main(string[] args)
     {
+        string email = SendEmail.OpcaoEmail();
+            while (email==null)
+        {
+            Console.WriteLine("Email Inválido, tente novamente!");
+            email = SendEmail.OpcaoEmail();
+            
+        }
+
         string phoneNumber = SendMessage.OpcaoMsg();
         
         int intervalo = 300000;
 
-       
-        Timer timer = new(state => VerificarNovoProduto(phoneNumber), null, 0, intervalo);
+        Timer timer = new(state => VerificarNovoProduto(phoneNumber,email), null, 0, intervalo);
 
-        
         while (true)
         {
-            
             Thread.Sleep(Timeout.Infinite);
         }
 
     }
 
-    static async void VerificarNovoProduto(object state)
+    static async void VerificarNovoProduto(object state,object state2)
 
     {
+        string email = state2 as string;
         string phoneNumber = state as string;
         string username = "11164448";
         string senha = "60-dayfreetrial";
@@ -50,14 +56,11 @@ class Program
             
             using (HttpClient client = new HttpClient())
             {
-                
                 var byteArray = Encoding.ASCII.GetBytes($"{username}:{senha}");
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
 
-                
                 HttpResponseMessage response = await client.GetAsync(url);
 
-                
                 if (response.IsSuccessStatusCode)
                 {
                    
@@ -101,7 +104,7 @@ class Program
                                 
                                 else LogRegister.RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "Benchmarking", "Erro", produto.Id);
 
-                                bool responseEmail = SendEmail.Enviaremail(produto.Nome,magazineLuizaNome,magazineLuizaPreco,mercadoLivreNome,mercadoLivrePreco,responseBench);
+                                bool responseEmail = SendEmail.EnviarEmail(email,produto.Nome,magazineLuizaNome,magazineLuizaPreco,mercadoLivreNome,mercadoLivrePreco,responseBench);
                                 
                                 if (responseEmail == true ) LogRegister.RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "SendEmail", "Sucesso", produto.Id);
 

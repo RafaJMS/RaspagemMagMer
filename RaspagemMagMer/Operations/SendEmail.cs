@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using static Program;
 
@@ -12,7 +13,7 @@ namespace RaspagemMagMer.Operations
 {
     public class SendEmail
     {
-        public static bool Enviaremail(string nomeProduto,string nomeMag ,string precoMag, string nomeMerc, string precoMerc, string responseBench)
+        public static bool EnviarEmail(string destinatario,string nomeProduto,string nomeMag ,string precoMag, string nomeMerc, string precoMerc, string responseBench)
         {
             
             string smtpserver = "smtp-mail.outlook.com";
@@ -28,7 +29,7 @@ namespace RaspagemMagMer.Operations
                 client.EnableSsl = true; 
 
                 
-                MailMessage mensagem = new(remetente, "rafaelMecenasRobo@outlook.com")
+                MailMessage mensagem = new(remetente, destinatario)
                 {
                     Subject = "Resultado da Comparação de Preços",
                     Body = $"Produto Pesquisado: {nomeProduto}\n" +
@@ -70,8 +71,30 @@ namespace RaspagemMagMer.Operations
             }
 
         }
+        public static bool ValidarEmail(string email)
+        {
+            // Padrão de expressão regular para verificar o formato do e-mail
+            string pattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
+
+            // Verifica se o e-mail corresponde ao padrão
+            return Regex.IsMatch(email, pattern);
+        }
+
+        public static string OpcaoEmail()
+        {
+            Console.Write("Insira o Email para recebimento do Resultado: ");
+            string email = Console.ReadLine();
+            bool opt = SendEmail.ValidarEmail(email);
+            if (opt)
+            {
+                Console.WriteLine("Email Informado: "+email);
+                return email;
+            }
+            return null;
+        }
     }
-
-
+    
 }
+
+
 
