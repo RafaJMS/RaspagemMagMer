@@ -10,7 +10,7 @@ namespace RaspagemMagMer.Models
 {
     public class LogContext : DbContext
     {
-        public DbSet<Log> Logs { get; set; }
+        public DbSet<Log> LOGROBO { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

@@ -116,7 +116,7 @@ namespace RaspagemMagMer.Operations
         {
             using (var context = new LogContext())
             {
-                return context.Logs.Any(log => log.IdProd == idProduto);
+                return context.LOGROBO.Any(log => log.IdProd == idProduto);
             }
         }
 
