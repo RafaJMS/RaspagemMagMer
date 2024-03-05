@@ -50,8 +50,6 @@ namespace RaspagemMagMer.Operations
 
                                 produtosVerificados.Add(produto);
 
-                                Console.WriteLine("Codigo Usuario: "+codUsu);
-
                                 if (!ProdutoJaRegistrado(produto.Id,codUsu))
                                 {
                                     LogRegister logRegister = new();
