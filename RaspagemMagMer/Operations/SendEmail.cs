@@ -44,8 +44,8 @@ namespace RaspagemMagMer.Operations
                            $"Resultado:\n" +
                            $"{responseBench}\n"+
                            "\n"+
-                           "Robo: 180312\n"+
-                           "Usuario: rafaelmecenas"
+                           "Robo: 1806\n"+
+                           "Usuario: rafaelMecenas"
 
                 };
 

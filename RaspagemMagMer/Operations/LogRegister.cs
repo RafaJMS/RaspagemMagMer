@@ -9,13 +9,17 @@ namespace RaspagemMagMer.Operations
 {
     public class LogRegister
     {
-        public static void RegistrarLog(string codRob, string usuRob, DateTime dateLog, string processo, string infLog, int idProd)
+        public static string CodRobo { get; set; } = "1806";
+
+        public static string UsuRob { get; set; } = "rafaelMecenas";
+
+        public static void RegistrarLog(DateTime dateLog, string processo, string infLog, int idProd)
         {
             using var context = new LogContext();
             var log = new Log
             {
-                CodigoRobo = codRob,
-                UsuarioRobo = usuRob,
+                CodigoRobo = CodRobo,
+                UsuarioRobo = UsuRob,
                 DateLog = dateLog,
                 Etapa = processo,
                 InformacaoLog = infLog,

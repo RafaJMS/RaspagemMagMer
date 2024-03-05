@@ -30,7 +30,7 @@ class Program
         
         int intervalo = 300000;
 
-        Timer timer = new(state => ProductsCheck.VerificarNovoProduto(phoneNumber,email), null, 0, intervalo);
+        Timer timer = new(state => DBCheck.VerificarNovoProduto(phoneNumber,email), null, 0, intervalo);
 
         while (true)
         {

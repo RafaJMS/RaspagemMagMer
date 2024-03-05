@@ -33,7 +33,7 @@ namespace RaspagemMagMer.Scraps
                     
                     string firstProductPrice = firstProductPriceNode.InnerText.Trim();
 
-                    LogRegister.RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "WebScraping - Mercado Livre", "Sucesso", idProduto);
+                    LogRegister.RegistrarLog(DateTime.Now, "WebScraping - Mercado Livre", "Sucesso", idProduto);
 
                     return firstProductPrice;
                 }
@@ -41,7 +41,7 @@ namespace RaspagemMagMer.Scraps
                 {
                     Console.WriteLine("Preço não encontrado.");
 
-                    LogRegister.RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "WebScraping - Mercado Livre", "Preço não encontrado", idProduto);
+                    LogRegister.RegistrarLog(DateTime.Now, "WebScraping - Mercado Livre", "Preço não encontrado", idProduto);
 
                     return null;
                 }
@@ -50,7 +50,7 @@ namespace RaspagemMagMer.Scraps
             {
                 Console.WriteLine($"Erro ao acessar a página: {ex.Message}");
 
-                LogRegister.RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "Web Scraping - Mercado Livre", $"Erro: {ex.Message}", idProduto);
+                LogRegister.RegistrarLog(DateTime.Now, "Web Scraping - Mercado Livre", $"Erro: {ex.Message}", idProduto);
 
                 return null;
             }

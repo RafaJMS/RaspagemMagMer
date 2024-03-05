@@ -31,7 +31,7 @@ namespace RaspagemMagMer.Scraps
                         string firstProductName = nameElement.Text;
                         string firstProductPrice = priceElement.Text;
 
-                        LogRegister.RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "WebScraping - Magazine Luiza", "Sucesso", idProduto);
+                        LogRegister.RegistrarLog(DateTime.Now, "WebScraping - Magazine Luiza", "Sucesso", idProduto);
 
                         return firstProductPrice;
                     }
@@ -39,7 +39,7 @@ namespace RaspagemMagMer.Scraps
                     {
                         Console.WriteLine("Preço não encontrado.");
 
-                        LogRegister.RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "WebScraping - Magazine Luiza", "Preço não encontrado", idProduto);
+                        LogRegister.RegistrarLog(DateTime.Now, "WebScraping - Magazine Luiza", "Preço não encontrado", idProduto);
 
                         return null;
                     }
@@ -49,7 +49,7 @@ namespace RaspagemMagMer.Scraps
             {
                 Console.WriteLine($"Erro ao acessar a página: {ex.Message}");
 
-                LogRegister.RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "Web Scraping - Magazine Luiza", $"Erro: {ex.Message}", idProduto);
+                LogRegister.RegistrarLog(DateTime.Now, "Web Scraping - Magazine Luiza", $"Erro: {ex.Message}", idProduto);
 
                 return null;
             }

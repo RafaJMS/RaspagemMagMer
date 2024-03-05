@@ -43,8 +43,8 @@ namespace RaspagemMagMer.Operations
                                $"*Resultado*:\n" +
                                $"{responseBench}\n" +
                                "\n" +
-                               "Robo: 180312\n" +
-                               "Usuario: rafaelmecenas"
+                               "Robo: 1806\n" +
+                               "Usuario: rafaelMecenas"
                        );
 
                     byte[] response_data;
@@ -53,13 +53,13 @@ namespace RaspagemMagMer.Operations
                     response_data = await client.UploadValuesTaskAsync(url, "POST", parameters);
                     responseString = Encoding.UTF8.GetString(response_data);
                     Console.WriteLine("Response String: " + responseString);
-                    LogRegister.RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "SendZap", "Sucesso", produtoid);
+                    LogRegister.RegistrarLog(DateTime.Now, "SendZap", "Sucesso", produtoid);
 
 
             }
                 catch (Exception ex)
                 {
-                LogRegister.RegistrarLog("180312", "rafaelmecenas", DateTime.Now, "SendZap", "Erro", produtoid);
+                LogRegister.RegistrarLog(DateTime.Now, "SendZap", "Erro", produtoid);
                 Console.WriteLine($"Erro na Mensagem: {ex.Message}");
                 Console.WriteLine("Vale a pena conferir se a extensão do Whatssap está Incluida no navegador!");
                 }
